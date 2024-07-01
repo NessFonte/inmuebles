@@ -9,6 +9,8 @@ from rest_framework import generics, mixins
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+from inmuebles_app.api.permissions import AdminOrReadOnly
 
 
 class ComentarioCreate(generics.CreateAPIView):
@@ -63,6 +65,7 @@ class ComentarioDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 # Agrupacion de las dos clases creadas por APIView
 class EmpresaVS(viewsets.ModelViewSet):
+    permission_classes = [AdminOrReadOnly]
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
 
