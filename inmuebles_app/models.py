@@ -17,8 +17,10 @@ class Edificacion(models.Model):
     pais = models.CharField(max_length=150)
     descripcion = models.TextField(max_length=500)
     imagen = models.CharField(max_length=900)
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="edificacion_list")
     active = models.BooleanField(default=True)
+    avg_calificacion = models.FloatField(default=0)
+    number_calificacion = models.IntegerField(default=0)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="edificacion_list")
     created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

@@ -28,6 +28,14 @@ class ComentarioCreate(generics.CreateAPIView):
         if comentario_queryset.exists():
             raise ValidationError("El usuario ya escribió un comentario para este inmueble")
         
+        if inmueble.number_calificacion == 0:
+            inmueble.avg_calificacion = serializer.validated_data['calificacion']
+        else:
+            inmueble.avg_calificacion = (serializer.validated_data['calificacion'] + inmueble.avg_calificacion) / 2
+        
+        inmueble.number_calificacion += 1
+        inmueble.save()
+            
         serializer.save(edificacion=inmueble, comentario_user=user)
     
 
