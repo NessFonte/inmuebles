@@ -10,11 +10,12 @@ from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from inmuebles_app.api.permissions import AdminOrReadOnly, ComentarioUserOrReadOnly
+from inmuebles_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
 
 
 class ComentarioCreate(generics.CreateAPIView):
     serializer_class = ComentarioSerializer
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Comentario.objects.all()
@@ -40,15 +41,16 @@ class ComentarioCreate(generics.CreateAPIView):
     
 
 class ComentarioList(generics.ListCreateAPIView):
-    serializer_class = ComentarioSerializer
     permission_classes = [IsAuthenticated]
+    serializer_class = ComentarioSerializer
+    
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Comentario.objects.filter(edificacion=pk)
     
 
 class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [ComentarioUserOrReadOnly]
+    permission_classes = [IsComentarioUserOrReadOnly]
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
 
@@ -75,7 +77,7 @@ class ComentarioDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 # Agrupacion de las dos clases creadas por APIView
 class EmpresaVS(viewsets.ModelViewSet):
-    permission_classes = [AdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
 
@@ -173,6 +175,8 @@ class EmpresaDetailAV(APIView):
             
         
 class EdificacionAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+    
     def get(self, request):
         inmuebles = Edificacion.objects.all()
         serializer = EdificacionSerializer(inmuebles, many=True)
@@ -188,6 +192,8 @@ class EdificacionAV(APIView):
         
 
 class EdificacionDetailAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+    
     def get(self, request, pk):
         try:
             inmueble = Edificacion.objects.get(pk=pk)
