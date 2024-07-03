@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'user_app',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -145,14 +147,16 @@ REST_FRAMEWORK = {
     #    'rest_framework.throttling.UserRateThrottle',
     #],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '5/day',
-        'user': '10/day',
-        'comentario-create': '2/day',
-        'comentario-list': '8/day',
-        'comentario-detail': '3/day',
+        'anon': '5000/day',
+        'user': '10000/day',
+        'comentario-create': '2000/day',
+        'comentario-list': '8000/day',
+        'comentario-detail': '3000/day',
     }
 }
 
 SIMPLE_JWT = {
-    'ROTATE_REFRESH_TOKEN': True
+    'ROTATE_REFRESH_TOKEN': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
 }

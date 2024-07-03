@@ -13,6 +13,20 @@ from rest_framework.permissions import IsAuthenticated
 from inmuebles_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
 from inmuebles_app.api.throlling import ComentarioCreateThrottle, ComentarioListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
+
+class UsuarioComentario(generics.ListAPIView):
+    serializer_class = ComentarioSerializer
+    
+    #def get_queryset(self):
+    #    username = self.kwargs['username']
+    #    return Comentario.objects.filter(comentario_user__username=username)
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        return Comentario.objects.filter(comentario_user__username=username)
 
 
 class ComentarioCreate(generics.CreateAPIView):
@@ -47,6 +61,8 @@ class ComentarioList(generics.ListCreateAPIView):
     #permission_classes = [IsAuthenticated]
     serializer_class = ComentarioSerializer
     throttle_classes = [ComentarioListThrottle, AnonRateThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['comentario_user__username', 'active']
     
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -179,6 +195,13 @@ class EmpresaDetailAV(APIView):
         empresa.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)'''
             
+
+class EdificacionList(generics.ListAPIView):
+    queryset = Edificacion.objects.all()
+    serializer_class = EdificacionSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['direccion', 'empresa__nombre']
+
         
 class EdificacionAV(APIView):
     permission_classes = [IsAdminOrReadOnly]

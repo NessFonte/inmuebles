@@ -2,13 +2,14 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 #from inmuebles_app.api.views import inmuebles_list, inmueble_id #Importacion de los servicios por métodos
 from inmuebles_app.api.views import (EdificacionAV, EdificacionDetailAV, ComentarioList, ComentarioDetail, 
-ComentarioCreate, EmpresaVS) #Importacion de los servicios por clases
+ComentarioCreate, EmpresaVS, UsuarioComentario, EdificacionList) #Importacion de los servicios por clases
 
 router = DefaultRouter()
 router.register('empresa', EmpresaVS, basename="empresa")
 
 urlpatterns = [
-    path('edificacion/', EdificacionAV.as_view(), name="edificacion-list"),
+    path('edificacion/', EdificacionAV.as_view(), name="edificacion"),
+    path('edificacion/list/', EdificacionList.as_view(), name="edificacion-list"),
     path('edificacion/<int:pk>', EdificacionDetailAV.as_view(), name="edificacion-detail"),
     
     path('', include(router.urls)),
@@ -18,4 +19,6 @@ urlpatterns = [
     path('edificacion/<int:pk>/comentario-create/', ComentarioCreate.as_view(), name="comentario-create"),
     path('edificacion/<int:pk>/comentario/', ComentarioList.as_view(), name="comentario-list"),
     path('edificacion/comentario/<int:pk>', ComentarioDetail.as_view(), name="comentario-detail"),
+    #path('edificacion/comentarios/<str:username>/', UsuarioComentario.as_view(), name="usuario-comentario-detail"),
+    path('edificacion/comentarios/', UsuarioComentario.as_view(), name="usuario-comentario-detail"),
 ]
