@@ -11,11 +11,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from inmuebles_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+from inmuebles_app.api.throlling import ComentarioCreateThrottle, ComentarioListThrottle
 
 
 class ComentarioCreate(generics.CreateAPIView):
     serializer_class = ComentarioSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ComentarioCreateThrottle]
     
     def get_queryset(self):
         return Comentario.objects.all()
@@ -41,8 +44,9 @@ class ComentarioCreate(generics.CreateAPIView):
     
 
 class ComentarioList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     serializer_class = ComentarioSerializer
+    throttle_classes = [ComentarioListThrottle, AnonRateThrottle]
     
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -53,6 +57,8 @@ class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsComentarioUserOrReadOnly]
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'comentario-detail'
 
 
 # Métodos genéricos con mixins
