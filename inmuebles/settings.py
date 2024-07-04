@@ -74,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'inmuebles.wsgi.application'
+AUTH_USER_MODEL = 'user_app.Account'
 
 
 # Database
